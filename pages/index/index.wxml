@@ -1,0 +1,70 @@
+<!--flash-->
+<view class='animation' wx:if="{{animation}}">
+  <view class='animation-list'></view>
+</view>
+
+<!--image-->
+<view class = 'pages'>
+  <view class = 'face'>
+    <image src = '{{images}}' mode = 'widthFix'></image>
+  </view>
+</view>
+ 
+ <!--result-->
+ <view class ='result'>
+  <text class = 'result-text'>detect result</text>
+ </view>
+
+
+
+<!--attributes-->
+<view wx:if="{{faceend}}">
+  <view class = 'from'>
+    <text>gender</text>
+    <text>{{gender}}</text>
+  </view>
+
+  <view class = 'from'>
+    <text>age</text>
+    <text>{{age}}</text>
+  </view>
+
+  <view class = 'from'>
+    <text>emotion</text>
+    <text>{{emotion}}</text>
+  </view>
+
+  <view class = 'from'>
+    <text>beauty</text>
+    <text>{{scrore}}</text>
+  </view> 
+
+  <view class = 'from'>
+    <text>expression</text>
+    <text>{{expression}}</text>
+  </view>
+
+  <view class = 'from'>
+    <text>glasses</text>
+    <text>{{glasses}}</text>
+  </view>
+</view>
+
+<!--no face detected-->
+<view wx:else>
+  <view class = 'from'>
+    <text>warning</text>
+    <text>没有检测到人脸</text>
+  </view>
+
+  <view class = 'from'>
+    <text>Tips</text>
+    <text>请重新选择图片</text>
+  </view>
+</view>
+
+<!--button-->
+<view class='btn'>
+  <button type='primary' bindtap='face_image'>choose pic</button>
+</view>
+  
