@@ -4,21 +4,21 @@ const searchInput = document.getElementById('searchInput')
 const resultsContainer = document.getElementById('resultsContainer')
 
 let allItems = [
-  { title: '计算器', subtitle: '应用程序', icon: '🧮', type: 'app' },
-  { title: '记事本', subtitle: '应用程序', icon: '📝', type: 'app' },
-  { title: 'Safari 浏览器', subtitle: '应用程序', icon: '🌐', type: 'app' },
-  { title: '邮件', subtitle: '应用程序', icon: '📧', type: 'app' },
-  { title: '音乐', subtitle: '应用程序', icon: '🎵', type: 'app' },
-  { title: '照片', subtitle: '应用程序', icon: '📸', type: 'app' },
-  { title: '设置', subtitle: '系统偏好设置', icon: '⚙️', type: 'app' },
-  { title: '终端', subtitle: '应用程序', icon: '💻', type: 'app' },
-  { title: 'GitHub', subtitle: 'https://github.com', icon: '🔗', type: 'website' },
-  { title: 'Google', subtitle: 'https://google.com', icon: '🔍', type: 'website' },
-  { title: 'Stack Overflow', subtitle: 'https://stackoverflow.com', icon: '💡', type: 'website' },
-  { title: '文档', subtitle: '我的文档', icon: '📄', type: 'file' },
-  { title: '下载', subtitle: '下载文件夹', icon: '📥', type: 'file' },
-  { title: '桌面', subtitle: '桌面文件夹', icon: '🖥️', type: 'file' },
-  { title: '项目文件夹', subtitle: '工作空间', icon: '📁', type: 'file' }
+  { title: '计算器', subtitle: '应用程序', icon: 'APP', type: 'app' },
+  { title: '记事本', subtitle: '应用程序', icon: 'APP', type: 'app' },
+  { title: 'Safari 浏览器', subtitle: '应用程序', icon: 'APP', type: 'app' },
+  { title: '邮件', subtitle: '应用程序', icon: 'APP', type: 'app' },
+  { title: '音乐', subtitle: '应用程序', icon: 'APP', type: 'app' },
+  { title: '照片', subtitle: '应用程序', icon: 'APP', type: 'app' },
+  { title: '设置', subtitle: '系统偏好设置', icon: 'SYS', type: 'app' },
+  { title: '终端', subtitle: '应用程序', icon: 'APP', type: 'app' },
+  { title: 'GitHub', subtitle: 'https://github.com', icon: 'WEB', type: 'website' },
+  { title: 'Google', subtitle: 'https://google.com', icon: 'WEB', type: 'website' },
+  { title: 'Stack Overflow', subtitle: 'https://stackoverflow.com', icon: 'WEB', type: 'website' },
+  { title: '文档', subtitle: '我的文档', icon: 'FILE', type: 'file' },
+  { title: '下载', subtitle: '下载文件夹', icon: 'DIR', type: 'file' },
+  { title: '桌面', subtitle: '桌面文件夹', icon: 'DIR', type: 'file' },
+  { title: '项目文件夹', subtitle: '工作空间', icon: 'DIR', type: 'file' }
 ]
 
 let clipboardHistory = [
@@ -65,9 +65,9 @@ let selectedIndex = 0
 
 function getItemIcon(item) {
   if (item.type === 'clipboard') {
-    return '📋'
+    return 'CLIP'
   } else if (item.type === 'snippet') {
-    return '⚡'
+    return 'SNP'
   }
   return item.icon
 }
