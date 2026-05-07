@@ -18,7 +18,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding-top: 100px;
+      padding-top: 60px;
     }
 
     .hint {
@@ -32,6 +32,15 @@
       border-radius: 8px;
       font-size: 14px;
       backdrop-filter: blur(10px);
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .hint kbd {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin: 0 2px;
     }
 
     .spotlight-container {
@@ -111,6 +120,14 @@
       flex-shrink: 0;
     }
 
+    .result-icon.clipboard-icon {
+      background: linear-gradient(135deg, #34c759, #30d158);
+    }
+
+    .result-icon.snippet-icon {
+      background: linear-gradient(135deg, #ff9500, #ff9f0a);
+    }
+
     .result-info {
       flex: 1;
       min-width: 0;
@@ -149,7 +166,14 @@
   </style>
 </head>
 <body>
-  <div class="hint">💡 试试在搜索框输入关键词，如 "计"、"G"、"文"</div>
+  <div class="hint">
+    💡 搜索示例：
+    <kbd>计</kbd> 应用搜索 |
+    <kbd>;e</kbd> 快捷输入 |
+    <kbd>:</kbd> 剪贴板历史 |
+    <kbd>↑↓</kbd> 选择 |
+    <kbd>Enter</kbd> 确认
+  </div>
 
   <div class="spotlight-container">
     <div class="search-box">
@@ -185,8 +209,93 @@
       { title: '项目文件夹', subtitle: '工作空间', icon: '📁', type: 'file' }
     ]
 
+    let clipboardHistory = [
+      { content: '这是刚才复制的内容北京市朝阳区...', timestamp: Date.now() - 60000, type: 'text' },
+      { content: 'https://github.com/user/repo', timestamp: Date.now() - 120000, type: 'url' },
+      { content: '138-0000-1234', timestamp: Date.now() - 180000, type: 'text' },
+      { content: '项目需求文档：完成用户管理模块开发', timestamp: Date.now() - 240000, type: 'text' }
+    ]
+
+    let snippets = [
+      { 
+        trigger: ';email', 
+        content: 'user@example.com', 
+        description: '我的邮箱',
+        type: 'snippet'
+      },
+      { 
+        trigger: ';addr', 
+        content: '北京市朝阳区某某路123号', 
+        description: '家庭地址',
+        type: 'snippet'
+      },
+      { 
+        trigger: ';tel', 
+        content: '138-0000-0000', 
+        description: '手机号码',
+        type: 'snippet'
+      },
+      { 
+        trigger: ';sig', 
+        content: '祝好！\n张三\n2024年1月1日', 
+        description: '邮件签名',
+        type: 'snippet'
+      },
+      { 
+        trigger: ';cmd', 
+        content: 'git status && git add . && git commit -m ""', 
+        description: 'Git 提交流程',
+        type: 'snippet'
+      },
+      { 
+        trigger: ';url', 
+        content: 'https://www.example.com/very-long-url-path', 
+        description: '常用网址',
+        type: 'snippet'
+      }
+    ]
+
     let currentResults = []
     let selectedIndex = 0
+
+    function getItemIcon(item) {
+      if (item.type === 'clipboard') {
+        return '📋'
+      } else if (item.type === 'snippet') {
+        return '⚡'
+      }
+      return item.icon
+    }
+
+    function getItemTitle(item) {
+      if (item.type === 'clipboard') {
+        const preview = item.content.substring(0, 50)
+        return preview + (item.content.length > 50 ? '...' : '')
+      } else if (item.type === 'snippet') {
+        return item.trigger
+      }
+      return item.title
+    }
+
+    function getItemSubtitle(item) {
+      if (item.type === 'clipboard') {
+        return '剪贴板历史'
+      } else if (item.type === 'snippet') {
+        return item.description
+      }
+      return item.subtitle
+    }
+
+    function getTimeAgo(timestamp) {
+      const seconds = Math.floor((Date.now() - timestamp) / 1000)
+      if (seconds < 60) return '刚刚'
+      const minutes = Math.floor(seconds / 60)
+      if (minutes < 60) return `${minutes}分钟前`
+      const hours = Math.floor(minutes / 60)
+      if (hours < 24) return `${hours}小时前`
+      const days = Math.floor(hours / 24)
+      return `${days}天前`
+    }
 
     function search(query) {
       if (!query.trim()) {
@@ -196,10 +305,40 @@
       }
 
       const lowerQuery = query.toLowerCase()
-      currentResults = allItems.filter(item => 
+      let results = []
+
+      results = results.concat(allItems.filter(item => 
         item.title.toLowerCase().includes(lowerQuery) ||
         item.subtitle.toLowerCase().includes(lowerQuery)
-      )
+      ))
+
+      if (query.startsWith(';')) {
+        const snippetQuery = query.toLowerCase()
+        results = results.concat(snippets.filter(snippet => 
+          snippet.trigger.toLowerCase().includes(snippetQuery) ||
+          snippet.description.toLowerCase().includes(snippetQuery)
+        ))
+      } else if (query.startsWith(':')) {
+        const clipQuery = query.substring(1).toLowerCase()
+        results = results.concat(clipboardHistory.filter(clip => 
+          clip.content.toLowerCase().includes(clipQuery)
+        ).map(clip => ({
+          ...clip,
+          type: 'clipboard',
+          title: clip.content,
+          subtitle: getTimeAgo(clip.timestamp)
+        })))
+      } else {
+        results = results.concat(clipboardHistory.map(clip => ({
+          ...clip,
+          type: 'clipboard',
+          title: clip.content,
+          subtitle: getTimeAgo(clip.timestamp)
+        })))
+        results = results.concat(snippets)
+      }
+
+      currentResults = results.slice(0, 10)
       selectedIndex = 0
       renderResults()
     }
@@ -214,10 +353,10 @@
 
       resultsContainer.innerHTML = currentResults.slice(0, 8).map((item, index) => `
         <div class="result-item ${index === selectedIndex ? 'selected' : ''}" data-index="${index}">
-          <div class="result-icon">${item.icon}</div>
+          <div class="result-icon ${item.type === 'clipboard' ? 'clipboard-icon' : item.type === 'snippet' ? 'snippet-icon' : ''}">${getItemIcon(item)}</div>
           <div class="result-info">
-            <div class="result-title">${item.title}</div>
-            <div class="result-subtitle">${item.subtitle}</div>
+            <div class="result-title">${getItemTitle(item)}</div>
+            <div class="result-subtitle">${getItemSubtitle(item)}</div>
           </div>
         </div>
       `).join('')
@@ -231,7 +370,13 @@
     }
 
     function selectItem(item) {
-      alert('你选择了: ' + item.title)
+      if (item.type === 'snippet') {
+        alert('插入快捷输入: ' + item.content)
+      } else if (item.type === 'clipboard') {
+        alert('复制到剪贴板: ' + item.content.substring(0, 30) + '...')
+      } else {
+        alert('打开: ' + item.title)
+      }
       searchInput.value = ''
       search('')
       searchInput.focus()

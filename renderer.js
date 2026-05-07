@@ -21,8 +21,86 @@ let allItems = [
   { title: '项目文件夹', subtitle: '工作空间', icon: '📁', type: 'file' }
 ]
 
+let clipboardHistory = [
+  { content: '你好，这是剪贴板内容1', timestamp: Date.now() - 60000, type: 'text' },
+  { content: 'www.example.com', timestamp: Date.now() - 120000, type: 'url' },
+  { content: '1234567890', timestamp: Date.now() - 180000, type: 'text' }
+]
+
+let snippets = [
+  { 
+    trigger: ';email', 
+    content: 'user@example.com', 
+    description: '我的邮箱',
+    type: 'snippet'
+  },
+  { 
+    trigger: ';addr', 
+    content: '北京市朝阳区某某路123号', 
+    description: '家庭地址',
+    type: 'snippet'
+  },
+  { 
+    trigger: ';tel', 
+    content: '138-0000-0000', 
+    description: '手机号码',
+    type: 'snippet'
+  },
+  { 
+    trigger: ';sig', 
+    content: '祝好！\n张三\n2024年1月1日', 
+    description: '邮件签名',
+    type: 'snippet'
+  },
+  { 
+    trigger: ';cmd', 
+    content: 'git status && git add . && git commit -m ""', 
+    description: 'Git 提交流程',
+    type: 'snippet'
+  }
+]
+
 let currentResults = []
 let selectedIndex = 0
+
+function getItemIcon(item) {
+  if (item.type === 'clipboard') {
+    return '📋'
+  } else if (item.type === 'snippet') {
+    return '⚡'
+  }
+  return item.icon
+}
+
+function getItemTitle(item) {
+  if (item.type === 'clipboard') {
+    const preview = item.content.substring(0, 50)
+    return preview + (item.content.length > 50 ? '...' : '')
+  } else if (item.type === 'snippet') {
+    return item.trigger
+  }
+  return item.title
+}
+
+function getItemSubtitle(item) {
+  if (item.type === 'clipboard') {
+    return '剪贴板历史'
+  } else if (item.type === 'snippet') {
+    return item.description
+  }
+  return item.subtitle
+}
+
+function getTimeAgo(timestamp) {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000)
+  if (seconds < 60) return '刚刚'
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes}分钟前`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}小时前`
+  const days = Math.floor(hours / 24)
+  return `${days}天前`
+}
 
 function search(query) {
   if (!query.trim()) {
@@ -32,10 +110,40 @@ function search(query) {
   }
 
   const lowerQuery = query.toLowerCase()
-  currentResults = allItems.filter(item => 
+  let results = []
+
+  results = results.concat(allItems.filter(item => 
     item.title.toLowerCase().includes(lowerQuery) ||
     item.subtitle.toLowerCase().includes(lowerQuery)
-  )
+  ))
+
+  if (query.startsWith(';')) {
+    const snippetQuery = query.toLowerCase()
+    results = results.concat(snippets.filter(snippet => 
+      snippet.trigger.toLowerCase().includes(snippetQuery) ||
+      snippet.description.toLowerCase().includes(snippetQuery)
+    ))
+  } else if (query.startsWith(':')) {
+    const clipQuery = query.substring(1).toLowerCase()
+    results = results.concat(clipboardHistory.filter(clip => 
+      clip.content.toLowerCase().includes(clipQuery)
+    ).map(clip => ({
+      ...clip,
+      type: 'clipboard',
+      title: clip.content,
+      subtitle: getTimeAgo(clip.timestamp)
+    })))
+  } else {
+    results = results.concat(clipboardHistory.map(clip => ({
+      ...clip,
+      type: 'clipboard',
+      title: clip.content,
+      subtitle: getTimeAgo(clip.timestamp)
+    })))
+    results = results.concat(snippets)
+  }
+
+  currentResults = results.slice(0, 10)
   selectedIndex = 0
   renderResults()
 }
@@ -54,10 +162,10 @@ function renderResults() {
 
   resultsContainer.innerHTML = currentResults.slice(0, 8).map((item, index) => `
     <div class="result-item ${index === selectedIndex ? 'selected' : ''}" data-index="${index}">
-      <div class="result-icon">${item.icon}</div>
+      <div class="result-icon ${item.type === 'clipboard' ? 'clipboard-icon' : item.type === 'snippet' ? 'snippet-icon' : ''}">${getItemIcon(item)}</div>
       <div class="result-info">
-        <div class="result-title">${item.title}</div>
-        <div class="result-subtitle">${item.subtitle}</div>
+        <div class="result-title">${getItemTitle(item)}</div>
+        <div class="result-subtitle">${getItemSubtitle(item)}</div>
       </div>
     </div>
   `).join('')
@@ -72,6 +180,17 @@ function renderResults() {
 
 function selectItem(item) {
   console.log('Selected:', item)
+  
+  if (item.type === 'snippet') {
+    console.log('插入 snippet:', item.content)
+    ipcRenderer.send('insert-text', item.content)
+  } else if (item.type === 'clipboard') {
+    console.log('复制剪贴板:', item.content)
+    ipcRenderer.send('copy-to-clipboard', item.content)
+  } else {
+    console.log('Selected:', item)
+  }
+  
   ipcRenderer.send('hide-window')
   searchInput.value = ''
   search('')
@@ -108,4 +227,15 @@ searchInput.addEventListener('keydown', (e) => {
 ipcRenderer.on('focus-search', () => {
   searchInput.focus()
   searchInput.select()
+})
+
+ipcRenderer.on('clipboard-update', (event, text) => {
+  clipboardHistory.unshift({
+    content: text,
+    timestamp: Date.now(),
+    type: 'text'
+  })
+  if (clipboardHistory.length > 50) {
+    clipboardHistory = clipboardHistory.slice(0, 50)
+  }
 })

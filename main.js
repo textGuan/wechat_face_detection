@@ -1,7 +1,8 @@
-const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
+const { app, BrowserWindow, globalShortcut, ipcMain, clipboard, nativeImage } = require('electron')
 const path = require('path')
 
 let mainWindow
+let lastClipboardContent = ''
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -39,8 +40,21 @@ function toggleWindow() {
   }
 }
 
+function startClipboardMonitoring() {
+  setInterval(() => {
+    const currentText = clipboard.readText()
+    if (currentText && currentText !== lastClipboardContent) {
+      lastClipboardContent = currentText
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('clipboard-update', currentText)
+      }
+    }
+  }, 1000)
+}
+
 app.whenReady().then(() => {
   createWindow()
+  startClipboardMonitoring()
 
   const accelerator = process.platform === 'darwin' ? 'Command+Space' : 'Control+Space'
   const ret = globalShortcut.register(accelerator, () => {
@@ -69,9 +83,29 @@ app.on('window-all-closed', () => {
 })
 
 ipcMain.on('resize-window', (event, height) => {
-  mainWindow.setSize(700, height)
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.setSize(700, height)
+  }
 })
 
 ipcMain.on('hide-window', () => {
-  mainWindow.hide()
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.hide()
+  }
+})
+
+ipcMain.on('copy-to-clipboard', (event, text) => {
+  clipboard.writeText(text)
+})
+
+ipcMain.on('insert-text', (event, text) => {
+  clipboard.writeText(text)
+  const oldContent = lastClipboardContent
+  lastClipboardContent = text
+  
+  setTimeout(() => {
+    const { clipboard } = require('electron')
+    clipboard.writeText(oldContent)
+    lastClipboardContent = oldContent
+  }, 100)
 })

@@ -87,6 +87,14 @@ body {
   flex-shrink: 0;
 }
 
+.result-icon.clipboard-icon {
+  background: linear-gradient(135deg, #34c759, #30d158);
+}
+
+.result-icon.snippet-icon {
+  background: linear-gradient(135deg, #ff9500, #ff9f0a);
+}
+
 .result-info {
   flex: 1;
   min-width: 0;
