@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotlight Search Demo</title>
+  <title>Spotlight Search - 快捷键自定义演示</title>
   <style>
     * {
       margin: 0;
@@ -19,6 +19,8 @@
       align-items: flex-start;
       justify-content: center;
       padding-top: 60px;
+      flex-direction: column;
+      gap: 30px;
     }
 
     .hint {
@@ -32,8 +34,9 @@
       border-radius: 8px;
       font-size: 14px;
       backdrop-filter: blur(10px);
-      max-width: 700px;
+      max-width: 600px;
       text-align: center;
+      z-index: 2000;
     }
 
     .hint kbd {
@@ -41,6 +44,43 @@
       padding: 2px 6px;
       border-radius: 3px;
       margin: 0 2px;
+    }
+
+    .demo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .demo-title {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .demo-wrapper {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .demo-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .demo-section-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 16px;
+      font-weight: 500;
     }
 
     .spotlight-container {
@@ -79,6 +119,30 @@
 
     #searchInput::placeholder {
       color: #888;
+    }
+
+    .settings-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: #888;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .settings-btn:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: #333;
+    }
+
+    .settings-btn svg {
+      width: 18px;
+      height: 18px;
     }
 
     .results-container {
@@ -152,265 +216,273 @@
       text-overflow: ellipsis;
     }
 
-    .results-container::-webkit-scrollbar {
-      width: 8px;
+    /* 设置面板样式 */
+    .settings-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 16px;
+      box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.28);
+      width: 450px;
+      padding: 20px;
     }
 
-    .results-container::-webkit-scrollbar-track {
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .close-settings {
+      width: 28px;
+      height: 28px;
+      border: none;
       background: transparent;
+      color: #888;
+      font-size: 24px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .results-container::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 4px;
+    .close-settings:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: #333;
+    }
+
+    .settings-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .setting-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .setting-item label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .shortcut-input-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #shortcutInput {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+      color: #333;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #shortcutInput:focus,
+    #shortcutInput.recording {
+      border-color: #007aff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+    }
+
+    #shortcutInput::placeholder {
+      color: #999;
+    }
+
+    .clear-shortcut {
+      padding: 10px 16px;
+      border: none;
+      background: rgba(0, 0, 0, 0.08);
+      color: #333;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .clear-shortcut:hover {
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .features-list {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .features-list h4 {
+      color: white;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .features-list ul {
+      list-style: none;
+      color: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .features-list li {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .features-list strong {
+      color: white;
     }
   </style>
 </head>
 <body>
   <div class="hint">
-    搜索示例：
-    <kbd>计</kbd> 应用搜索 |
-    <kbd>;e</kbd> 快捷输入 |
-    <kbd>:</kbd> 剪贴板历史 |
-    <kbd>↑↓</kbd> 选择 |
-    <kbd>Enter</kbd> 确认
+    🔍 Spotlight 搜索演示 - 包含快捷键自定义功能
   </div>
 
-  <div class="spotlight-container">
-    <div class="search-box">
-      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-      <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
+  <div class="demo-container">
+    <h1 class="demo-title">Spotlight Search</h1>
+    
+    <div class="demo-wrapper">
+      <div class="demo-section">
+        <h3 class="demo-section-title">搜索框界面</h3>
+        <div class="spotlight-container">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
+            <button class="settings-btn" id="settingsBtn" title="设置">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .45-2.2l-.45.65a1.65 1.65 0 0 0-2.2-45a1.65 1.65 0 0 0-.452.2"></path>
+                <path d="M12 1.1v.001"></path>
+                <path d="M12 22.9v-.001"></path>
+                <path d="M4.6 15a1.65 1.65 0 0 1-.45-2.2l.45.65a1.65 1.65 0 0 1 2.2-45a1.65 1.65 0 0 1 .452.2"></path>
+                <path d="M1.1 12h.001"></path>
+                <path d="M22.9 12h-.001"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h3 class="demo-section-title">设置面板</h3>
+        <div class="settings-panel">
+          <div class="settings-header">
+            <h3>设置</h3>
+          </div>
+          <div class="settings-content">
+            <div class="setting-item">
+              <label>快捷键</label>
+              <div class="shortcut-input-wrapper">
+                <input type="text" id="shortcutInput" value="Command+Space" readonly placeholder="点击设置">
+                <button class="clear-shortcut">清除</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="results-container" id="resultsContainer">
+
+    <div class="features-list">
+      <h4>新功能</h4>
+      <ul>
+        <li><strong>快捷键自定义：</strong>点击设置按钮进入快捷键设置</li>
+        <li><strong>智能快捷键捕获：</strong>点击输入框后按任意组合键自动捕获</li>
+        <li><strong>配置持久化：</strong>快捷键自动保存到用户配置目录</li>
+        <li><strong>恢复默认：</strong>一键恢复默认快捷键</li>
+        <li><strong>搜索增强：</strong>保持原有的应用、剪贴板、快捷片段搜索功能</li>
+      </ul>
     </div>
   </div>
 
   <script>
-    const searchInput = document.getElementById('searchInput')
-    const resultsContainer = document.getElementById('resultsContainer')
+    // 这是演示页面的脚本，实际的功能在 Electron 应用中
+    console.log('这是一个演示页面，展示 Spotlight 搜索界面和设置面板');
 
-    let allItems = [
+    const searchInput = document.getElementById('searchInput');
+    const settingsBtn = document.getElementById('settingsBtn');
+    
+    searchInput.placeholder = '试试搜索：calc、;email、: 等关键词';
+
+    let mockItems = [
       { title: '计算器', subtitle: '应用程序', icon: 'APP', type: 'app' },
-      { title: '记事本', subtitle: '应用程序', icon: 'APP', type: 'app' },
-      { title: 'Safari 浏览器', subtitle: '应用程序', icon: 'APP', type: 'app' },
-      { title: '邮件', subtitle: '应用程序', icon: 'APP', type: 'app' },
-      { title: '音乐', subtitle: '应用程序', icon: 'APP', type: 'app' },
-      { title: '照片', subtitle: '应用程序', icon: 'APP', type: 'app' },
-      { title: '设置', subtitle: '系统偏好设置', icon: 'SYS', type: 'app' },
-      { title: '终端', subtitle: '应用程序', icon: 'APP', type: 'app' },
-      { title: 'GitHub', subtitle: 'https://github.com', icon: 'WEB', type: 'website' },
-      { title: 'Google', subtitle: 'https://google.com', icon: 'WEB', type: 'website' },
-      { title: 'Stack Overflow', subtitle: 'https://stackoverflow.com', icon: 'WEB', type: 'website' },
-      { title: '文档', subtitle: '我的文档', icon: 'FILE', type: 'file' },
-      { title: '下载', subtitle: '下载文件夹', icon: 'DIR', type: 'file' },
-      { title: '桌面', subtitle: '桌面文件夹', icon: 'DIR', type: 'file' },
-      { title: '项目文件夹', subtitle: '工作空间', icon: 'DIR', type: 'file' }
-    ]
+      { title: ';email', subtitle: '我的邮箱', icon: 'SNP', type: 'snippet' },
+      { title: '复制的内容...', subtitle: '刚刚', icon: 'CLIP', type: 'clipboard' }
+    ];
 
-    let clipboardHistory = [
-      { content: '这是刚才复制的内容北京市朝阳区...', timestamp: Date.now() - 60000, type: 'text' },
-      { content: 'https://github.com/user/repo', timestamp: Date.now() - 120000, type: 'url' },
-      { content: '138-0000-1234', timestamp: Date.now() - 180000, type: 'text' },
-      { content: '项目需求文档：完成用户管理模块开发', timestamp: Date.now() - 240000, type: 'text' }
-    ]
+    let searchTerm = '';
+    let selectedIndex = 0;
 
-    let snippets = [
-      { 
-        trigger: ';email', 
-        content: 'user@example.com', 
-        description: '我的邮箱',
-        type: 'snippet'
-      },
-      { 
-        trigger: ';addr', 
-        content: '北京市朝阳区某某路123号', 
-        description: '家庭地址',
-        type: 'snippet'
-      },
-      { 
-        trigger: ';tel', 
-        content: '138-0000-0000', 
-        description: '手机号码',
-        type: 'snippet'
-      },
-      { 
-        trigger: ';sig', 
-        content: '祝好！\n张三\n2024年1月1日', 
-        description: '邮件签名',
-        type: 'snippet'
-      },
-      { 
-        trigger: ';cmd', 
-        content: 'git status && git add . && git commit -m ""', 
-        description: 'Git 提交流程',
-        type: 'snippet'
-      },
-      { 
-        trigger: ';url', 
-        content: 'https://www.example.com/very-long-url-path', 
-        description: '常用网址',
-        type: 'snippet'
-      }
-    ]
-
-    let currentResults = []
-    let selectedIndex = 0
-
-    function getItemIcon(item) {
-      if (item.type === 'clipboard') {
-        return 'CLIP'
-      } else if (item.type === 'snippet') {
-        return 'SNP'
-      }
-      return item.icon
-    }
-
-    function getItemTitle(item) {
-      if (item.type === 'clipboard') {
-        const preview = item.content.substring(0, 50)
-        return preview + (item.content.length > 50 ? '...' : '')
-      } else if (item.type === 'snippet') {
-        return item.trigger
-      }
-      return item.title
-    }
-
-    function getItemSubtitle(item) {
-      if (item.type === 'clipboard') {
-        return '剪贴板历史'
-      } else if (item.type === 'snippet') {
-        return item.description
-      }
-      return item.subtitle
-    }
-
-    function getTimeAgo(timestamp) {
-      const seconds = Math.floor((Date.now() - timestamp) / 1000)
-      if (seconds < 60) return '刚刚'
-      const minutes = Math.floor(seconds / 60)
-      if (minutes < 60) return `${minutes}分钟前`
-      const hours = Math.floor(minutes / 60)
-      if (hours < 24) return `${hours}小时前`
-      const days = Math.floor(hours / 24)
-      return `${days}天前`
-    }
-
-    function search(query) {
-      if (!query.trim()) {
-        currentResults = []
-        renderResults()
-        return
-      }
-
-      const lowerQuery = query.toLowerCase()
-      let results = []
-
-      results = results.concat(allItems.filter(item => 
-        item.title.toLowerCase().includes(lowerQuery) ||
-        item.subtitle.toLowerCase().includes(lowerQuery)
-      ))
-
-      if (query.startsWith(';')) {
-        const snippetQuery = query.toLowerCase()
-        results = results.concat(snippets.filter(snippet => 
-          snippet.trigger.toLowerCase().includes(snippetQuery) ||
-          snippet.description.toLowerCase().includes(snippetQuery)
-        ))
-      } else if (query.startsWith(':')) {
-        const clipQuery = query.substring(1).toLowerCase()
-        results = results.concat(clipboardHistory.filter(clip => 
-          clip.content.toLowerCase().includes(clipQuery)
-        ).map(clip => ({
-          ...clip,
-          type: 'clipboard',
-          title: clip.content,
-          subtitle: getTimeAgo(clip.timestamp)
-        })))
-      } else {
-        results = results.concat(clipboardHistory.map(clip => ({
-          ...clip,
-          type: 'clipboard',
-          title: clip.content,
-          subtitle: getTimeAgo(clip.timestamp)
-        })))
-        results = results.concat(snippets)
-      }
-
-      currentResults = results.slice(0, 10)
-      selectedIndex = 0
-      renderResults()
-    }
-
-    function renderResults() {
-      if (currentResults.length === 0) {
-        resultsContainer.classList.remove('visible')
-        return
-      }
-
-      resultsContainer.classList.add('visible')
-
-      resultsContainer.innerHTML = currentResults.slice(0, 8).map((item, index) => `
-        <div class="result-item ${index === selectedIndex ? 'selected' : ''}" data-index="${index}">
-          <div class="result-icon ${item.type === 'clipboard' ? 'clipboard-icon' : item.type === 'snippet' ? 'snippet-icon' : ''}">${getItemIcon(item)}</div>
+    function renderMockResults() {
+      const container = document.createElement('div');
+      container.className = 'results-container visible';
+      container.style.marginTop = '12px';
+      container.style.display = 'block';
+      
+      container.innerHTML = mockItems.map((item, index) => `
+        <div class="result-item ${index === 0 ? 'selected' : ''}">
+          <div class="result-icon ${item.type === 'clipboard' ? 'clipboard-icon' : item.type === 'snippet' ? 'snippet-icon' : ''}">${item.icon}</div>
           <div class="result-info">
-            <div class="result-title">${getItemTitle(item)}</div>
-            <div class="result-subtitle">${getItemSubtitle(item)}</div>
+            <div class="result-title">${item.title}</div>
+            <div class="result-subtitle">${item.subtitle}</div>
           </div>
         </div>
-      `).join('')
+      `).join('');
 
-      document.querySelectorAll('.result-item').forEach(el => {
-        el.addEventListener('click', () => {
-          const index = parseInt(el.dataset.index)
-          selectItem(currentResults[index])
-        })
-      })
-    }
-
-    function selectItem(item) {
-      if (item.type === 'snippet') {
-        alert('插入快捷输入: ' + item.content)
-      } else if (item.type === 'clipboard') {
-        alert('复制到剪贴板: ' + item.content.substring(0, 30) + '...')
-      } else {
-        alert('打开: ' + item.title)
-      }
-      searchInput.value = ''
-      search('')
-      searchInput.focus()
+      const parent = document.querySelector('.spotlight-container');
+      const existing = parent.querySelector('.results-container');
+      if (existing) existing.remove();
+      parent.appendChild(container);
     }
 
     searchInput.addEventListener('input', (e) => {
-      search(e.target.value)
-    })
+      searchTerm = e.target.value;
+      if (searchTerm) {
+        renderMockResults();
+      } else {
+        const container = document.querySelector('.results-container');
+        if (container) container.remove();
+      }
+    });
 
     searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        searchInput.value = ''
-        search('')
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        if (currentResults.length > 0) {
-          selectedIndex = Math.min(selectedIndex + 1, currentResults.length - 1)
-          renderResults()
-        }
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        if (currentResults.length > 0) {
-          selectedIndex = Math.max(selectedIndex - 1, 0)
-          renderResults()
-        }
-      } else if (e.key === 'Enter') {
-        if (currentResults.length > 0) {
-          selectItem(currentResults[selectedIndex])
-        }
+      if (e.key === 'Enter' || e.key === 'Escape') {
+        e.preventDefault();
+        const container = document.querySelector('.results-container');
+        if (container) container.remove();
+        searchInput.value = '';
       }
-    })
+    });
 
-    searchInput.focus()
+    settingsBtn.addEventListener('click', () => {
+      alert('设置面板：在真实的 Electron 应用中，点击这里可以打开设置面板来自定义快捷键');
+    });
   </script>
 </body>
 </html>

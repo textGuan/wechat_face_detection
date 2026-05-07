@@ -14,10 +14,39 @@
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
       <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
+      <button class="settings-btn" id="settingsBtn" title="设置">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .45-2.2l-.45.65a1.65 1.65 0 0 0-2.2-45a1.65 1.65 0 0 0-.452.2"></path>
+          <path d="M12 1.1v.001"></path>
+          <path d="M12 22.9v-.001"></path>
+          <path d="M4.6 15a1.65 1.65 0 0 1-.45-2.2l.45.65a1.65 1.65 0 0 1 2.2-45a1.65 1.65 0 0 1 .452.2"></path>
+          <path d="M1.1 12h.001"></path>
+          <path d="M22.9 12h-.001"></path>
+        </svg>
+      </button>
     </div>
     <div class="results-container" id="resultsContainer">
     </div>
   </div>
+
+  <!-- 设置面板 -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h3>设置</h3>
+      <button class="close-settings" id="closeSettings">&times;</button>
+    </div>
+    <div class="settings-content">
+      <div class="setting-item">
+        <label>快捷键</label>
+        <div class="shortcut-input-wrapper">
+          <input type="text" id="shortcutInput" readonly placeholder="点击设置">
+          <button class="clear-shortcut" id="clearShortcut">清除</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="renderer.js"></script>
 </body>
 </html>

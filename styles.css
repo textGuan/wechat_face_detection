@@ -48,6 +48,30 @@ body {
   color: #888;
 }
 
+.settings-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.settings-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+.settings-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .results-container {
   margin-top: 12px;
   max-height: 400px;
@@ -82,7 +106,8 @@ body {
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 18px;
+  font-size: 12px;
+  font-weight: 600;
   margin-right: 12px;
   flex-shrink: 0;
 }
@@ -129,4 +154,123 @@ body {
 .results-container::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
+}
+
+/* 设置面板样式 */
+.settings-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.28);
+  width: 450px;
+  padding: 20px;
+  z-index: 1000;
+  display: none;
+}
+
+.settings-panel.visible {
+  display: block;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.settings-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-settings {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #888;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-settings:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-item label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.shortcut-input-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+#shortcutInput {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+  color: #333;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#shortcutInput:focus,
+#shortcutInput.recording {
+  border-color: #007aff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+}
+
+#shortcutInput::placeholder {
+  color: #999;
+}
+
+.clear-shortcut {
+  padding: 10px 16px;
+  border: none;
+  background: rgba(0, 0, 0, 0.08);
+  color: #333;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.clear-shortcut:hover {
+  background: rgba(0, 0, 0, 0.12);
 }
