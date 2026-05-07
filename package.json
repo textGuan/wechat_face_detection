@@ -1,0 +1,27 @@
+{
+  "name": "spotlight-search",
+  "version": "1.0.0",
+  "description": "A Spotlight-like search application for macOS and Windows",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": ["spotlight", "search", "electron"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.spotlight.search",
+    "productName": "Spotlight Search",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
